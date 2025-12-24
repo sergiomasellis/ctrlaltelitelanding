@@ -64,7 +64,7 @@ function HeroSection() {
           >
             <div className="inline-flex items-center rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-sm font-medium text-amber-500 mb-8 backdrop-blur-sm shadow-[0_0_15px_rgba(245,158,11,0.2)]">
               <Zap className="w-3.5 h-3.5 mr-2 fill-amber-500" />
-              PROFESSIONAL I RACING TELEMETRY
+              PROFESSIONAL iRACING TELEMETRY
             </div>
           </motion.div>
 
@@ -96,14 +96,26 @@ function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3 }}
           >
-            <Button size="lg" className="h-14 px-8 text-base bg-primary hover:bg-amber-400 text-black font-bold tracking-tight transition-all duration-300 rounded-md shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:shadow-[0_0_35px_rgba(245,158,11,0.5)]">
-              <Download className="mr-2 w-5 h-5" />
-              Download v1.0
-            </Button>
-            <Button size="lg" variant="outline" className="h-14 px-8 text-base bg-zinc-950/50 text-white border-zinc-800 hover:bg-zinc-900 hover:border-zinc-700 transition-all duration-300 rounded-md">
-              <ChevronRight className="mr-2 w-5 h-5" />
-              View on GitHub
-            </Button>
+            <a
+              href="https://github.com/sergiomasellis/ctrlaltelite/releases/download/v1.0.0-alpha/ctrl-alt-elite-v1.0.0-alpha.zip"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button size="lg" className="h-14 px-8 text-base bg-primary hover:bg-amber-400 text-black font-bold tracking-tight transition-all duration-300 rounded-md shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:shadow-[0_0_35px_rgba(245,158,11,0.5)]">
+                <Download className="mr-2 w-5 h-5" />
+                Download v1.0.0-alpha
+              </Button>
+            </a>
+            <a
+              href="https://github.com/sergiomasellis/ctrlaltelite/tree/main"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button size="lg" variant="outline" className="h-14 px-8 text-base bg-zinc-950/50 text-white border-zinc-800 hover:bg-zinc-900 hover:border-zinc-700 transition-all duration-300 rounded-md">
+                <ChevronRight className="mr-2 w-5 h-5" />
+                View on GitHub
+              </Button>
+            </a>
           </motion.div>
         </div>
 
@@ -314,7 +326,7 @@ function Footer() {
       <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center">
         <p className="font-medium">&copy; 2025 Ctrl Alt Elite. Built for Speed.</p>
         <div className="flex gap-8 mt-4 md:mt-0 font-medium">
-          <a href="#" className="hover:text-primary transition-colors">Github</a>
+          <a href="https://github.com/sergiomasellis/ctrlaltelite/tree/main" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">Github</a>
           <a href="#" className="hover:text-primary transition-colors">Discord</a>
           <a href="#" className="hover:text-primary transition-colors">Twitter</a>
         </div>
