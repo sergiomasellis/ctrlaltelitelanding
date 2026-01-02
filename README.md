@@ -1,0 +1,1 @@
+# Hotlap.ai landing page
