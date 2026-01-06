@@ -7,12 +7,59 @@ import { CheckCircle, XCircle, Loader2 } from "lucide-react"
 
 type Status = "loading" | "success" | "error"
 
+interface StatePayload {
+  provider: string
+  nonce: string
+}
+
+function decodeState(state: string): StatePayload | null {
+  try {
+    const decoded = atob(state)
+    return JSON.parse(decoded)
+  } catch {
+    return null
+  }
+}
+
 export default function AuthCallbackPage() {
   const [status, setStatus] = useState<Status>("loading")
   const [errorMessage, setErrorMessage] = useState("")
   const [deepLink, setDeepLink] = useState("")
 
   useEffect(() => {
+    const url = new URL(window.location.href)
+
+    // Check for iRacing OAuth callback (query params: ?code=...&state=...)
+    const code = url.searchParams.get("code")
+    const state = url.searchParams.get("state")
+
+    if (code && state) {
+      // Validate state is for iRacing
+      const stateData = decodeState(state)
+      if (stateData?.provider === "iracing") {
+        // Redirect to app with code and state for token exchange
+        const link = `hotlapai://auth/iracing-callback?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}`
+        setDeepLink(link)
+        setStatus("success")
+
+        setTimeout(() => {
+          window.location.href = link
+        }, 500)
+        return
+      }
+    }
+
+    // Check for error in query params (iRacing error)
+    const queryError = url.searchParams.get("error")
+    const queryErrorDescription = url.searchParams.get("error_description")
+
+    if (queryError) {
+      setStatus("error")
+      setErrorMessage(queryErrorDescription || queryError)
+      return
+    }
+
+    // Existing Supabase OAuth flow (hash-based: #access_token=...&refresh_token=...)
     const hash = window.location.hash.substring(1)
     const params = new URLSearchParams(hash)
 
