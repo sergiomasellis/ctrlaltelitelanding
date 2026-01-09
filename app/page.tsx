@@ -357,7 +357,7 @@ function Footer() {
         <p className="font-medium">&copy; {new Date().getFullYear()} Hotlap.ai. Built for Speed.</p>
         <div className="flex gap-8 mt-4 md:mt-0 font-medium">
           <a href="https://github.com/hotlap-ai/releases" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">Github</a>
-          <a href="#" className="hover:text-primary transition-colors">Discord</a>
+          <a href="https://discord.gg/2VDqAbTP5Y" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">Discord</a>
           <a href="#" className="hover:text-primary transition-colors">Twitter</a>
         </div>
       </div>
