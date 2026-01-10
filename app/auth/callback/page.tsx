@@ -10,6 +10,7 @@ type Status = "loading" | "success" | "error"
 interface StatePayload {
   provider: string
   nonce: string
+  origin?: "web" | "desktop"
 }
 
 function decodeState(state: string): StatePayload | null {
@@ -24,10 +25,15 @@ function decodeState(state: string): StatePayload | null {
 export default function AuthCallbackPage() {
   const [status, setStatus] = useState<Status>("loading")
   const [errorMessage, setErrorMessage] = useState("")
-  const [deepLink, setDeepLink] = useState("")
+  const [redirectLink, setRedirectLink] = useState("")
+  const [isWebRedirect, setIsWebRedirect] = useState(false)
 
   useEffect(() => {
     const url = new URL(window.location.href)
+
+    // Check for origin in query params (Discord/Google via Supabase web app)
+    const originFromQuery = url.searchParams.get("origin")
+    const isWebOrigin = originFromQuery === "web"
 
     // Check for iRacing OAuth callback (query params: ?code=...&state=...)
     const code = url.searchParams.get("code")
@@ -37,9 +43,15 @@ export default function AuthCallbackPage() {
       // Validate state is for iRacing
       const stateData = decodeState(state)
       if (stateData?.provider === "iracing") {
-        // Redirect to app with code and state for token exchange
-        const link = `hotlapai://auth/iracing-callback?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}`
-        setDeepLink(link)
+        // Check origin in state for iRacing
+        const isWebFromState = stateData.origin === "web"
+        setIsWebRedirect(isWebFromState)
+
+        // Redirect to appropriate destination
+        const link = isWebFromState
+          ? `https://app.hotlap.ai/auth/iracing-callback?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}`
+          : `hotlapai://auth/iracing-callback?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}`
+        setRedirectLink(link)
         setStatus("success")
 
         setTimeout(() => {
@@ -80,8 +92,13 @@ export default function AuthCallbackPage() {
       return
     }
 
-    const link = "hotlapai://auth/callback#" + hash
-    setDeepLink(link)
+    setIsWebRedirect(isWebOrigin)
+
+    // Redirect to web app or desktop deep link based on origin
+    const link = isWebOrigin
+      ? `https://app.hotlap.ai/auth/callback#${hash}`
+      : `hotlapai://auth/callback#${hash}`
+    setRedirectLink(link)
     setStatus("success")
 
     // Auto-redirect after short delay
@@ -90,9 +107,9 @@ export default function AuthCallbackPage() {
     }, 500)
   }, [])
 
-  const handleOpenApp = () => {
-    if (deepLink) {
-      window.location.href = deepLink
+  const handleContinue = () => {
+    if (redirectLink) {
+      window.location.href = redirectLink
     }
   }
 
@@ -130,16 +147,18 @@ export default function AuthCallbackPage() {
                 <CheckCircle className="w-8 h-8 text-green-500" />
               </div>
               <h2 className="text-xl font-bold text-white mb-2">Sign in complete</h2>
-              <p className="text-zinc-400 mb-8">You can now return to the app.</p>
+              <p className="text-zinc-400 mb-8">
+                {isWebRedirect ? "Redirecting you back to the app..." : "You can now return to the app."}
+              </p>
               <Button
-                onClick={handleOpenApp}
+                onClick={handleContinue}
                 size="lg"
                 className="w-full h-12 bg-primary hover:bg-amber-400 text-black font-bold tracking-tight transition-all duration-300 rounded-md shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:shadow-[0_0_35px_rgba(245,158,11,0.5)]"
               >
-                Open Hotlap.ai
+                {isWebRedirect ? "Continue to App" : "Open Hotlap.ai"}
               </Button>
               <p className="mt-6 text-sm text-zinc-600">
-                You can close this window after opening the app.
+                {isWebRedirect ? "You will be redirected automatically." : "You can close this window after opening the app."}
               </p>
             </div>
           )}
